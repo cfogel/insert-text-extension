@@ -1,0 +1,9 @@
+{
+    "name": "Insert Text",
+    "description": "Insert predefined phrases",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html"
+    }
+}

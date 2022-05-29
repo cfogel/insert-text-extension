@@ -41,13 +41,11 @@ export const phrases = {
                     phrases: [
                         {
                             pid: "fourth-phrase",
-                            pgid: "pg2",
                             ptitle: "Fourth Title",
                             ptext: "The text of the fourth phrase"
                         },
                         {
                             pid: "fifth-phrase",
-                            pgid: "pg2",
                             ptitle: "Fifth Title",
                             ptext: "The text of the fifth phrase"
                         }

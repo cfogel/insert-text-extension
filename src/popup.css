@@ -1,0 +1,34 @@
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+textarea {
+	width: 100%;
+	height: 100px;
+	margin-top: 5px;
+}
+
+body {
+	width: 410px;
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 5px;
+	margin: 7px;
+}
+
+select {
+	flex: 1;
+	padding: 5px;
+}
+
+optgroup {
+	font-size: smaller;
+}
+
+optgroup option {
+	font-size: larger;
+}

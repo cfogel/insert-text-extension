@@ -8,21 +8,32 @@ for (const group of phrases.groups) {
     title.disabled = true;
     select.add(title);
 
-    for (const phrase of group.phrases) {
-        let option = new Option(phrase.ptitle, phrase.pid);
+    for (const phrasegroup of group.phrasegroups) {
+        let pparent = select
+        if (phrasegroup.pgid) {
+            pparent = document.createElement('optgroup');
+            pparent.id = phrasegroup.pgid;
+            pparent.label = phrasegroup.pgtitle;
+        }
 
-        select.add(option);
+        for (const phrase of phrasegroup.phrases) {
+            let option = new Option(phrase.ptitle, phrase.pid);
 
-        select.addEventListener('change', async(event) => {
-            if (select.value == phrase.pid) {
-                let tbox = document.createElement('textarea');
-                tbox.value = phrase.ptext;
-                document.body.append(tbox);
-                tbox.focus();
-                tbox.select();
-                document.execCommand('copy');
-            }
-        });
+            pparent.append(option)
+
+            select.addEventListener('change', async(event) => {
+                if (select.value == phrase.pid) {
+                    let tbox = document.createElement('textarea');
+                    tbox.value = phrase.ptext;
+                    document.body.append(tbox);
+                    tbox.focus();
+                    tbox.select();
+                    document.execCommand('copy');
+                }
+            });
+        }
+
+        if (phrasegroup.pgid) { select.add(pparent) }
     }
 
     document.body.append(select);

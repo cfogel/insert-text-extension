@@ -1,4 +1,6 @@
-import {phrases} from "./phrases.js";
+import { phrases } from "./phrases.js";
+
+let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
 for (const group of phrases.groups) {
     let select = document.createElement('select');
@@ -21,8 +23,9 @@ for (const group of phrases.groups) {
 
             pparent.append(option)
 
-            select.addEventListener('change', async(event) => {
+            select.addEventListener('change', async (event) => {
                 if (select.value == phrase.pid) {
+                    chrome.runtime.sendMessage({ ptext: phrase.ptext, tabId: tab.id });
                     let tbox = document.createElement('textarea');
                     tbox.value = phrase.ptext;
                     document.body.append(tbox);

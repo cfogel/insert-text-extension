@@ -1,8 +1,17 @@
 {
     "name": "Insert Text",
     "description": "Insert predefined phrases",
-    "version": "1.0",
+    "version": "0.1.0",
     "manifest_version": 3,
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
     "action": {
         "default_popup": "popup.html"
     }

@@ -1,0 +1,30 @@
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+#phrase-settings-lists {
+    display: flex;
+}
+
+#phrase-settings-lists div {
+    margin: 0px 5px;
+}
+
+#phrase-settings-lists div select {
+    width: 200px;
+}
+
+option:disabled {
+    text-align: center;
+}
+
+#selected-phrase-text {
+    border: 1px solid;
+    margin: 5px;
+    padding: 5px;
+    min-height: 75px;
+}

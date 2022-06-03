@@ -6,8 +6,14 @@ html {
     box-sizing: inherit;
 }
 
+#phrase-settings {
+    display: flex;
+    flex-direction: column;
+}
+
 #phrase-settings-lists {
     display: flex;
+    flex: 200px;
 }
 
 #phrase-settings-lists div {

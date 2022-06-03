@@ -1,8 +1,7 @@
-import { phrases } from "./phrases.js";
-
 let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-for (const group of phrases.groups) {
+chrome.storage.local.get(["phrases"], async (result) => {
+for (const group of result.phrases.groups) {
     let select = document.createElement('select');
     select.id = group.gid;
 
@@ -40,4 +39,4 @@ for (const group of phrases.groups) {
     }
 
     document.body.append(select);
-}
+}});

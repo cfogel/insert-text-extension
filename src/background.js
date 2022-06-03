@@ -1,7 +1,14 @@
 import { phrases } from "./phrases.js";
 
 chrome.runtime.onInstalled.addListener(async () => {
-    for (const group of phrases.groups) {
+    chrome.storage.local.set({ "phrases": phrases });
+
+    loadmenus(phrases);
+
+});
+
+function loadmenus(phraseobj) {
+    for (const group of phraseobj.groups) {
         chrome.contextMenus.create({
             id: group.gid,
             title: group.gtitle,
@@ -43,7 +50,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             }
         }
     }
-});
+}
 
 function addtext(t) {
     document.activeElement.value = document.activeElement.value + t;
@@ -59,3 +66,10 @@ chrome.runtime.onMessage.addListener(
         return true;
     }
 );
+
+chrome.storage.onChanged.addListener(() => {
+    chrome.storage.local.get(["phrases"], async (result) => {
+        chrome.contextMenus.removeAll();
+        loadmenus(result.phrases);
+    });
+});

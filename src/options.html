@@ -12,7 +12,6 @@
         <h2>Phrases</h2>
         <label id="file-label" for="file-input">Load Phrases</label>
         <input type="file" id="file-input">
-        <pre id="filedata"></pre>
 
         <div id="phrase-settings-lists">
 
@@ -31,7 +30,10 @@
             </div>
 
             <div id="phrases">
+            <div id="phrases-header">
                 <h3>Phrases</h3>
+                <button type="button" id="new-phrase-btn" style="display: none;">Add new phrase</button>
+            </div>
                 <select id="phrases-list">
                     <option disabled selected>-------------------------</option>
                 </select>
@@ -39,6 +41,20 @@
             
         </div>
         <div id="selected-phrase-text"></div>
+        <div id="add-phrase" style="display: none;">
+            <div id="new-phrase-info">
+                <div id="new-pid">
+                <label for="new-phrase-pid">ID: </label>
+                <input id="new-phrase-pid"></div>
+                
+                <div id="new-title">
+                <label for="new-phrase-title">Title: </label>
+                <input id="new-phrase-title"></div>
+                
+            </div>
+            <textarea id="new-phrase-text"></textarea>
+            <button type="button" id="save-new-phrase">Save</button>
+        </div>
     </div>
     <script type="module" src="options.js"></script>
 </body>

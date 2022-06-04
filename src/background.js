@@ -1,12 +1,19 @@
 import { phrases } from "./phrases.js";
 
+/** Use phrases.js as default when installed */
 chrome.runtime.onInstalled.addListener(async () => {
+
+    // Save it to storage
     chrome.storage.local.set({ "phrases": phrases });
 
+    // Create context menus
     loadmenus(phrases);
-
 });
 
+/**
+ * Generate context menus for phrases
+ * @param phraseobj Phrases to load
+ */
 function loadmenus(phraseobj) {
     for (const group of phraseobj.groups) {
         chrome.contextMenus.create({
@@ -43,7 +50,7 @@ function loadmenus(phraseobj) {
                         chrome.scripting.executeScript({
                             target: { tabId: tab.id },
                             func: addtext,
-                            args: [phrase.ptext]
+                            args: [phrase.ptext],
                         });
                     }
                 });
@@ -52,6 +59,10 @@ function loadmenus(phraseobj) {
     }
 }
 
+/**
+ * Append text to document's active element
+ * @param {string} t Text to append
+ */
 function addtext(t) {
     document.activeElement.value = document.activeElement.value + t;
 }
@@ -61,12 +72,13 @@ chrome.runtime.onMessage.addListener(
         chrome.scripting.executeScript({
             target: { tabId: msg.tabId },
             func: addtext,
-            args: [msg.ptext]
+            args: [msg.ptext],
         });
         return true;
     }
 );
 
+/** Update context menus when phrases change */
 chrome.storage.onChanged.addListener(() => {
     chrome.storage.local.get(["phrases"], async (result) => {
         chrome.contextMenus.removeAll();

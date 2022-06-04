@@ -9,6 +9,7 @@ html {
 #phrase-settings {
     display: flex;
     flex-direction: column;
+    width: min-content;
 }
 
 #phrase-settings-lists {
@@ -33,4 +34,47 @@ option:disabled {
     margin: 5px;
     padding: 5px;
     min-height: 75px;
+}
+
+#phrases-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+#add-phrase {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+#new-phrase-info {
+    display: flex;
+}
+
+#new-phrase-info div {
+    display: flex;
+    align-items: baseline;
+}
+
+#new-phrase-info input {
+    flex: 1;
+}
+
+#new-pid {
+    flex: 1;
+    padding-left: 5px;
+}
+
+#new-title {
+    flex: 2;
+    padding-left: 10px;
+}
+
+#new-phrase-info label {
+    padding-right: 5px;
+}
+
+#new-phrase-text {
+    margin: 5px 0px;
 }

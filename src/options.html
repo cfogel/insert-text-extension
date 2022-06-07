@@ -10,52 +10,60 @@
     <h1>Options</h1>
     <div id="phrase-settings">
         <h2>Phrases</h2>
-        <label id="file-label" for="file-input">Load Phrases</label>
+        <label for="file-input">Load Phrases</label>
         <input type="file" id="file-input">
 
         <div id="phrase-settings-lists">
 
-            <div id="groups">
+            <div id="groups" class="settings-list">
                 <h3>Groups</h3>
                 <select id="groups-list">
                     <option disabled selected>Select Group</option>
                 </select>
             </div>
 
-            <div id="phrase-groups">
+            <div id="phrase-groups" class="settings-list">
                 <h3>Phrase Groups</h3>
                 <select id="phrase-groups-list">
                     <option disabled selected>-------------------------</option>
                 </select>
             </div>
 
-            <div id="phrases">
-            <div id="phrases-header">
-                <h3>Phrases</h3>
-                <button type="button" id="new-phrase-btn" style="display: none;">Add new phrase</button>
-            </div>
+            <div id="phrases" class="settings-list">
+                <div id="phrases-header">
+                    <h3>Phrases</h3>
+                    <button type="button" id="new-phrase-btn" style="display: none;">Add new phrase</button>
+                </div>
                 <select id="phrases-list">
                     <option disabled selected>-------------------------</option>
                 </select>
             </div>
-            
+
         </div>
-        <div id="selected-phrase-text"></div>
+        <div id="selected-phrase">
+            <button type="button" id="edit-btn" disabled>Edit</button>
+            <div id="selected-phrase-text" class="phrase-text-border"></div>
+            <textarea id="update-phrase-text" class="phrase-text-border" style="display: none;"></textarea>
+            <button type="button" id="save-update" style="display: none;">Update</button>
+        </div>
         <div id="add-phrase" style="display: none;">
             <div id="new-phrase-info">
                 <div id="new-pid">
-                <label for="new-phrase-pid">ID: </label>
-                <input id="new-phrase-pid"></div>
-                
+                    <label for="new-phrase-pid">ID: </label>
+                    <input id="new-phrase-pid">
+                </div>
+
                 <div id="new-title">
-                <label for="new-phrase-title">Title: </label>
-                <input id="new-phrase-title"></div>
-                
+                    <label for="new-phrase-title">Title: </label>
+                    <input id="new-phrase-title">
+                </div>
+
             </div>
             <textarea id="new-phrase-text"></textarea>
             <button type="button" id="save-new-phrase">Save</button>
         </div>
     </div>
+    <!-- <div id="whitespace"></div> -->
     <script type="module" src="options.js"></script>
 </body>
 

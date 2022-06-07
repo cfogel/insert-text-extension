@@ -67,13 +67,16 @@ function addtext(t) {
     document.activeElement.value = document.activeElement.value + t;
 }
 
+/** Message handling */
 chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
-        chrome.scripting.executeScript({
-            target: { tabId: msg.tabId },
-            func: addtext,
-            args: [msg.ptext],
-        });
+        if (msg.cmd == "ins") {
+            chrome.scripting.executeScript({
+                target: { tabId: msg.tabId },
+                func: addtext,
+                args: [msg.ptext],
+            });
+        }
         return true;
     }
 );

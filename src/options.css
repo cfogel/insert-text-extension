@@ -2,7 +2,9 @@ html {
     box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     box-sizing: inherit;
 }
 
@@ -14,26 +16,19 @@ html {
 
 #phrase-settings-lists {
     display: flex;
-    flex: 200px;
+    flex: 185px;
 }
 
-#phrase-settings-lists div {
+.settings-list {
     margin: 0px 5px;
 }
 
-#phrase-settings-lists div select {
+.settings-list select {
     width: 200px;
 }
 
 option:disabled {
     text-align: center;
-}
-
-#selected-phrase-text {
-    border: 1px solid;
-    margin: 5px;
-    padding: 5px;
-    min-height: 75px;
 }
 
 #phrases-header {
@@ -42,19 +37,40 @@ option:disabled {
     align-items: baseline;
 }
 
+#selected-phrase {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+    row-gap: 5px;
+}
+
+#edit-btn {
+    align-self: flex-end;
+}
+
+.phrase-text-border {
+    border: 1px solid;
+    padding: 5px;
+    min-height: 75px;
+}
+
 #add-phrase {
     display: flex;
     flex-direction: column;
     margin: 5px;
 }
 
-#new-phrase-info {
+#new-phrase-info,
+#new-phrase-info div {
     display: flex;
 }
 
 #new-phrase-info div {
-    display: flex;
     align-items: baseline;
+}
+
+#new-phrase-info label {
+    padding-right: 5px;
 }
 
 #new-phrase-info input {
@@ -71,10 +87,10 @@ option:disabled {
     padding-left: 10px;
 }
 
-#new-phrase-info label {
-    padding-right: 5px;
-}
-
 #new-phrase-text {
     margin: 5px 0px;
+}
+
+#whitespace {
+    height: 1000px;
 }

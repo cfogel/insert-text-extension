@@ -24,7 +24,7 @@ for (const group of result.phrases.groups) {
 
             select.addEventListener('change', async (event) => {
                 if (select.value == phrase.pid) {
-                    chrome.runtime.sendMessage({ ptext: phrase.ptext, tabId: tab.id });
+                    chrome.runtime.sendMessage({ cmd: "ins", ptext: phrase.ptext, tabId: tab.id });
                     let tbox = document.createElement('textarea');
                     tbox.value = phrase.ptext;
                     document.body.append(tbox);

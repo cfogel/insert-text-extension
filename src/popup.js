@@ -5,7 +5,7 @@ for (const group of result.phrases.groups) {
     let select = document.createElement('select');
     select.id = group.gid;
 
-    let title = new Option('---' + group.gtitle + '---', '', true, true);
+    let title = new Option(`---${group.gtitle}---`, '', true, true);
     title.disabled = true;
     select.add(title);
 

@@ -1,9 +1,12 @@
+
 if (document.body.childElementCount == 1) {
-    chrome.storage.onChanged.addListener(async () => {
+    chrome.runtime.onMessage.addListener((result, sender) => {
+        console.log(result);
+        console.log(sender);
         var tarea = document.querySelector(".PSPDFKit-Comment-Thread .PSPDFKit-Comment-Editor .PSPDFKit-Comment-Editor-Input");
         if (tarea) {
-            var phrase = await chrome.storage.local.get(['text']);
-            tarea.value = tarea.value + phrase.text;
+            tarea.value = tarea.value + result.msg;
         }
     });
+    chrome.runtime.sendMessage({ msg: "content script" });
 }

@@ -1,6 +1,18 @@
 import { phrases } from "./phrases.js";
 
 var events = Array();
+var cTab = 0;
+chrome.runtime.onMessage.addListener((result, sender) => {
+    console.log(result);
+    console.log(sender);
+    if (result.msg == "content script") {
+        cTab = sender.tab.id;
+        console.log(cTab);
+    }
+    if (result.type == "phrase") {
+        chrome.tabs.sendMessage(cTab, result);
+    }
+});
 
 /** Use phrases.js as default when installed */
 chrome.runtime.onInstalled.addListener(async () => {
@@ -73,11 +85,39 @@ function addContextMenuListener(pid, ptext) {
  * @param {string} t Text to append
  */
 function addtext(t) {
-    document.activeElement.value = document.activeElement.value + t;
+    try {
+        const menubar = document.getElementById("previewerInner");
+
+        if (menubar) {
+            const oldactive = document.activeElement;
+
+            let oldphrase = document.getElementById("phrase-box");
+            if (oldphrase) {
+                oldphrase.remove();
+            }
+
+            let tbox = document.createElement('textarea');
+            tbox.id = "phrase-box";
+            tbox.value = t;
+            tbox.style.boxSizing = "border-box";
+            tbox.style.width = "100%";
+            document.getElementById("previewerInner").prepend(tbox);
+            tbox.focus();
+            tbox.select();
+            document.execCommand('copy');
+            oldactive.focus();
+
+        } else {
+            document.activeElement.value = document.activeElement.value + t;
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 /** Message handling */
-chrome.runtime.onMessage.addListener(
+/* chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
         if (msg.cmd == "ins") {
             chrome.scripting.executeScript({
@@ -88,7 +128,7 @@ chrome.runtime.onMessage.addListener(
         }
         return true;
     }
-);
+); */
 
 /** Update context menus when phrases change */
 chrome.storage.onChanged.addListener(() => {

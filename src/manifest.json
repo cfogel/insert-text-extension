@@ -2,16 +2,26 @@
     "manifest_version": 3,
     "name": "Insert Text",
     "version": "0.1.0",
-
     "action": {
         "default_popup": "popup.html"
     },
     "description": "Insert predefined phrases",
-
     "background": {
         "service_worker": "background.js",
         "type": "module"
     },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://annotate-ecs-us.foundations.blackboard.com/ui/pdf-viewer/*"
+            ],
+            "match_about_blank": true,
+            "all_frames": true,
+            "js": [
+                "content-script.js"
+            ]
+        }
+    ],
     "options_page": "options.html",
     "permissions": [
         "contextMenus",

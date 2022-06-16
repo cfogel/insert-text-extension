@@ -2,12 +2,10 @@ import { phrases } from "./phrases.js";
 
 var events = Array();
 var cTab = 0;
+
 chrome.runtime.onMessage.addListener((result, sender) => {
-    console.log(result);
-    console.log(sender);
     if (result.msg == "content script") {
         cTab = sender.tab.id;
-        console.log(cTab);
     }
     if (result.type == "phrase") {
         chrome.tabs.sendMessage(cTab, result);
@@ -15,7 +13,7 @@ chrome.runtime.onMessage.addListener((result, sender) => {
 });
 
 /** Use phrases.js as default when installed */
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(() => {
 
     // Save it to storage
     chrome.storage.local.set({ "phrases": phrases });
@@ -116,27 +114,12 @@ function addtext(t) {
     }
 }
 
-/** Message handling */
-/* chrome.runtime.onMessage.addListener(
-    function (msg, sender, sendResponse) {
-        if (msg.cmd == "ins") {
-            chrome.scripting.executeScript({
-                target: { tabId: msg.tabId },
-                func: addtext,
-                args: [msg.ptext],
-            });
-        }
-        return true;
-    }
-); */
-
 /** Update context menus when phrases change */
-chrome.storage.onChanged.addListener(() => {
-    chrome.storage.local.get(["phrases"], async (result) => {
-        for (const e of events) {
-            chrome.contextMenus.onClicked.removeListener(e);
-        }
-        chrome.contextMenus.removeAll();
-        loadmenus(result.phrases);
-    });
+chrome.storage.onChanged.addListener(async () => {
+    let result = await chrome.storage.local.get(["phrases"]);
+    for (const e of events) {
+        chrome.contextMenus.onClicked.removeListener(e);
+    }
+    chrome.contextMenus.removeAll();
+    loadmenus(result.phrases);
 });

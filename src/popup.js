@@ -1,7 +1,6 @@
-let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+const phraseData = await chrome.storage.local.get(["phrases"]);
 
-let result = await chrome.storage.local.get(["phrases"]);
-for (const group of result.phrases.groups) {
+for (const group of phraseData.phrases.groups) {
     let select = document.createElement('select');
     select.id = group.gid;
 
@@ -22,7 +21,7 @@ for (const group of result.phrases.groups) {
 
             pparent.append(option);
 
-            select.addEventListener('change', async (event) => {
+            select.addEventListener('change', (event) => {
                 if (select.value == phrase.pid) {
                     let tbox = document.createElement('textarea');
                     tbox.value = phrase.ptext;

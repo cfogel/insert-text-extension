@@ -24,7 +24,7 @@ loadphrases();
  */
 
 // Show form to add new phrase
-newbtn.addEventListener('click', async (event) => {
+newbtn.addEventListener('click', (event) => {
     unhideElements(addpdiv);
     clearValues(newpid, newtitle, newtext);
     hideElements(seltext, updatetext, updatebtn);
@@ -41,30 +41,29 @@ savebtn.addEventListener('click', async (event) => {
         ptext: newtext.value
     };
 
-    chrome.storage.local.get(["phrases"], async (result) => {
+    let result = await chrome.storage.local.get(["phrases"]);
 
-        /** Current phrases in storage */
-        const pdata = await result.phrases;
+    /** Current phrases in storage */
+    const pdata = result.phrases;
 
-        const newobj = addPhrase(pdata, gselect.value, pgselect.value, newphrase);
+    const newobj = addPhrase(pdata, gselect.value, pgselect.value, newphrase);
 
-        /* Clear form */
+    /* Clear form */
 
-        clearValues(newpid, newtitle, newtext);
-        hideElements(addpdiv);
-        unhideElements(seltext);
+    clearValues(newpid, newtitle, newtext);
+    hideElements(addpdiv);
+    unhideElements(seltext);
 
-        // Save updated object, refresh select lists
-        chrome.storage.local.set({ 
-            "phrases": newobj 
-        }, async (result) => {
-            loadphrases();
-        });
+    // Save updated object, refresh select lists
+    chrome.storage.local.set({
+        "phrases": newobj
+    }).then(() => {
+        loadphrases();
     });
 });
 
 // Show form to edit phrase
-editbtn.addEventListener('click', async (event) => {
+editbtn.addEventListener('click', (event) => {
 
     unhideElements(updatetext, updatebtn);
 
@@ -75,26 +74,25 @@ editbtn.addEventListener('click', async (event) => {
 
 // Save the updated phrase
 updatebtn.addEventListener('click', async (event) => {
-    
-    chrome.storage.local.get(["phrases"], async (result) => {
+    let result = await chrome.storage.local.get(["phrases"]);
 
-        /** Current phrases in storage */
-        const pdata = await result.phrases;
+    /** Current phrases in storage */
+    const pdata = result.phrases;
 
-        const newobj = updatePhrase(pdata, gselect.value, pgselect.value, pselect.value, updatetext.value);
+    const newobj = updatePhrase(pdata, gselect.value, pgselect.value, pselect.value, updatetext.value);
 
-        /* Clear form */
+    /* Clear form */
 
-        hideElements(updatetext, updatebtn);
-        unhideElements(seltext);
+    hideElements(updatetext, updatebtn);
+    unhideElements(seltext);
 
-        // Save updated object, refresh select lists
-        chrome.storage.local.set({ 
-            "phrases": newobj 
-        }, async (result) => {
-            loadphrases();
-        });
+    // Save updated object, refresh select lists
+    chrome.storage.local.set({
+        "phrases": newobj
+    }).then(() => {
+        loadphrases();
     });
+
 });
 
 // Open new file, load phrase data from JSON
@@ -102,11 +100,11 @@ filein.addEventListener('change', async (event) => {
 
     let [file] = filein.files;
     file.text().then((res) => {
-        chrome.storage.local.set({ 
-            "phrases": JSON.parse(res) 
-        }, async (result) => {
-            loadphrases();
+        chrome.storage.local.set({
+            "phrases": JSON.parse(res)
         });
+    }).then(() => {
+        loadphrases();
     });
 });
 
@@ -126,12 +124,12 @@ filein.addEventListener('change', async (event) => {
 function addPhrase(pdata, group, pgroup, newp) {
 
     /** Array index of selected group */
-    const g = pdata.groups.findIndex(function (gr) {
+    const g = pdata.groups.findIndex((gr) => {
         return gr.gid == group;
     });
 
     /** Array index of selected phrase group */
-    const pg = pdata.groups[g].phrasegroups.findIndex(function (pgr) {
+    const pg = pdata.groups[g].phrasegroups.findIndex((pgr) => {
         return (pgroup == "null" ? !pgr.pgid : pgr.pgid == pgroup);
     });
 
@@ -152,17 +150,17 @@ function addPhrase(pdata, group, pgroup, newp) {
 function updatePhrase(pdata, group, pgroup, prid, newtext) {
 
     /** Array index of selected group */
-    const g = pdata.groups.findIndex(function (gr) {
+    const g = pdata.groups.findIndex((gr) => {
         return gr.gid == group;
     });
 
     /** Array index of selected phrase group */
-    const pg = pdata.groups[g].phrasegroups.findIndex(function (pgr) {
+    const pg = pdata.groups[g].phrasegroups.findIndex((pgr) => {
         return (pgroup == "null" ? !pgr.pgid : pgr.pgid == pgroup);
     });
 
     /** Array index of phrase being updated */
-    const p = pdata.groups[g].phrasegroups[pg].phrases.findIndex(function (pr) {
+    const p = pdata.groups[g].phrasegroups[pg].phrases.findIndex((pr) => {
         return pr.pid == prid;
     });
 
@@ -185,19 +183,18 @@ function loadphrases() {
     gselect.item(0).text = "Select Group";
 
     /* Get phrases from storage */
-    chrome.storage.local.get(["phrases"], async (result) => {
+    let result = await chrome.storage.local.get(["phrases"]);
 
-        /* Add groups to group list */
-        for (const group of result.phrases.groups) {
+    /* Add groups to group list */
+    for (const group of result.phrases.groups) {
 
-            const gopt = new Option(group.gtitle, group.gid);
-            gselect.add(gopt);
+        const gopt = new Option(group.gtitle, group.gid);
+        gselect.add(gopt);
 
-            /* Event listener for new group being selected */
-            addGroupSelectEvent(group.gid, group.phrasegroups);
-        }
-        sizeselects();
-    });
+        /* Event listener for new group being selected */
+        addGroupSelectEvent(group.gid, group.phrasegroups);
+    }
+    sizeselects();
 }
 
 /**
@@ -207,7 +204,7 @@ function loadphrases() {
  */
 function addGroupSelectEvent(gid, phrasegroups) {
 
-    gselect.addEventListener('change', async (event) => {
+    gselect.addEventListener('change', (event) => {
         if (gselect.value == gid) {
 
             // Clear phrase and phrasegroup lists
@@ -252,7 +249,7 @@ function addPhrasegroupSelectItems(phrasegroups) {
  */
 function addPhrasegroupSelectEvent(pgid, phrases) {
 
-    pgselect.addEventListener('change', async (event) => {
+    pgselect.addEventListener('change', (event) => {
         if (pgselect.value == pgid) {
 
             // Clear phrase list
@@ -293,7 +290,7 @@ function addPhraseSelectItems(phrases) {
  */
 function addPhraseSelectEvent(pid, ptext) {
 
-    pselect.addEventListener('change', async (event) => {
+    pselect.addEventListener('change', (event) => {
         if (pselect.value == pid) {
 
             // Hide new/edit forms

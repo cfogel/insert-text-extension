@@ -1,14 +1,10 @@
 import { phrases } from "./phrases.js";
 
 var events = Array();
-var cTab = 0;
 
 chrome.runtime.onMessage.addListener((result, sender) => {
-    if (result.msg == "content script") {
-        cTab = sender.tab.id;
-    }
-    if (result.type == "phrase") {
-        chrome.tabs.sendMessage(cTab, result);
+    if (result.type == "content script") {
+        chrome.storage.local.set({ "csTab": sender.tab.id });
     }
 });
 
@@ -68,11 +64,17 @@ function createCM(id, parentId, title) {
 function addContextMenuListener(pid, ptext) {
     let l = events.push((info, tab) => {
         if (info.menuItemId == pid) {
+
+            chrome.storage.local.get(["csTab"]).then((result) => {
+                chrome.tabs.sendMessage(result.csTab, { type: "phrase", msg: ptext });
+            });
+
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: addtext,
                 args: [ptext],
             });
+
         }
     });
     chrome.contextMenus.onClicked.addListener(events[l - 1]);
@@ -115,11 +117,13 @@ function addtext(t) {
 }
 
 /** Update context menus when phrases change */
-chrome.storage.onChanged.addListener(async () => {
-    let result = await chrome.storage.local.get(["phrases"]);
-    for (const e of events) {
-        chrome.contextMenus.onClicked.removeListener(e);
+chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    if (changes.phrases) {
+        let result = await chrome.storage.local.get(["phrases"]);
+        for (const e of events) {
+            chrome.contextMenus.onClicked.removeListener(e);
+        }
+        chrome.contextMenus.removeAll();
+        loadmenus(result.phrases);
     }
-    chrome.contextMenus.removeAll();
-    loadmenus(result.phrases);
 });

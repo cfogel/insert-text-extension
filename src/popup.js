@@ -21,11 +21,12 @@ for (const group of phraseData.phrases.groups) {
 
             pparent.append(option);
 
-            select.addEventListener('change', (event) => {
+            select.addEventListener('change', async (event) => {
                 if (select.value == phrase.pid) {
                     let tbox = document.createElement('textarea');
                     tbox.value = phrase.ptext;
-                    chrome.runtime.sendMessage({ type: "phrase", msg: phrase.ptext });
+                    let cTab = await chrome.storage.local.get(["csTab"]);
+                    chrome.tabs.sendMessage(cTab.csTab, { type: "phrase", msg: phrase.ptext });
                     document.body.append(tbox);
                     tbox.focus();
                     tbox.select();

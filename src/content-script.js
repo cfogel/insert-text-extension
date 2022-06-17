@@ -4,6 +4,7 @@ if (document.body.childElementCount == 1) {
         if (tarea) {
             tarea.value = tarea.value + result.msg;
         }
+
     });
-    chrome.runtime.sendMessage({ msg: "content script" });
+    chrome.runtime.sendMessage({ type: "content script" });
 }

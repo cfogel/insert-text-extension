@@ -1,4 +1,5 @@
 if (document.body.childElementCount == 1) {
+    var port = chrome.runtime.connect({ name: "content-script" });
     chrome.runtime.onMessage.addListener((result, sender) => {
         var tarea = document.activeElement;
         if (tarea) {
@@ -7,5 +8,4 @@ if (document.body.childElementCount == 1) {
         }
 
     });
-    chrome.runtime.sendMessage({ type: "content script" });
 }

@@ -2,6 +2,18 @@ import { phrases } from "./phrases.js";
 
 var events = Array();
 
+chrome.runtime.onConnect.addListener(port => {
+    if (port.name == "content-script") {
+        chrome.storage.local.set({ "csTab": port.sender.tab.id });
+
+        port.onDisconnect.addListener(() => {
+            console.log("disconnected");
+            chrome.storage.local.set({ "csTab": null });
+        });
+    }
+
+});
+
 chrome.runtime.onMessage.addListener((result, sender) => {
     if (result.type == "content script") {
         chrome.storage.local.set({ "csTab": sender.tab.id });

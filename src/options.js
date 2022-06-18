@@ -175,7 +175,7 @@ function updatePhrase(pdata, group, pgroup, prid, newtext) {
 */
 
 /** Populate select lists with phrase data */
-function loadphrases() {
+async function loadphrases() {
 
     // Clear all three select lists
     clearselect(gselect, pgselect, pselect);

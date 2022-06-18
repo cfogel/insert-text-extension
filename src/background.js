@@ -1,33 +1,60 @@
 import { phrases } from "./phrases.js";
 
-var events = Array();
-
-chrome.runtime.onConnect.addListener(port => {
-    if (port.name == "content-script") {
-        chrome.storage.local.set({ "csTab": port.sender.tab.id });
-
-        port.onDisconnect.addListener(() => {
-            console.log("disconnected");
-            chrome.storage.local.set({ "csTab": null });
-        });
-    }
-
-});
-
-chrome.runtime.onMessage.addListener((result, sender) => {
-    if (result.type == "content script") {
-        chrome.storage.local.set({ "csTab": sender.tab.id });
-    }
-});
-
-/** Use phrases.js as default when installed */
 chrome.runtime.onInstalled.addListener(() => {
 
-    // Save it to storage
+    /* Use phrases.js as default when installed */
     chrome.storage.local.set({ "phrases": phrases });
+    chrome.storage.local.set({ "phraseMap": flattenPhrases(phrases) });
 
     // Create context menus
     loadmenus(phrases);
+});
+
+chrome.runtime.onConnect.addListener(port => {
+    /* Get tab id for content script */
+    if (port.name == "content-script") {
+        chrome.storage.local.set({ "csTab": port.sender.tab.id });
+
+        /* Clear id when content script disconnects */
+        port.onDisconnect.addListener(() => {
+            chrome.storage.local.set({ "csTab": null });
+        });
+    }
+});
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    try {
+        const result = await chrome.storage.local.get(["phraseMap", "csTab"]);
+        const phraseMap = new Map(result.phraseMap);
+        let ptext = phraseMap.get(info.menuItemId);
+
+        if (result.csTab) {
+            chrome.tabs.sendMessage(result.csTab, { type: "phrase", msg: ptext });
+        }
+        else {
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: addtext,
+                args: [ptext],
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    /* Update context menus when phrases change */
+    if (changes.phrases) {
+        let result = await chrome.storage.local.get(["phrases"]);
+
+        // Generate new map
+        let phraseMap = flattenPhrases(result.phrases);
+        chrome.storage.local.set({ "phraseMap": phraseMap });
+
+        chrome.contextMenus.removeAll();
+        loadmenus(result.phrases);
+    }
 });
 
 /**
@@ -39,14 +66,17 @@ function loadmenus(phraseobj) {
         createCM(group.gid, null, group.gtitle);
 
         for (const pgroup of group.phrasegroups) {
+            // If phrasegroup id is null, set group id as parent
             const pparent = (pgroup.pgid ? pgroup.pgid : group.gid);
+
+            // Create menu for phrasegroup if there is one
             if (pgroup.pgid) {
                 createCM(pgroup.pgid, group.gid, pgroup.pgtitle);
             }
 
+            // Create menus for phrases in phrasegroup
             for (const phrase of pgroup.phrases) {
                 createCM(phrase.pid, pparent, phrase.ptitle);
-                addContextMenuListener(phrase.pid, phrase.ptext);
             }
         }
     }
@@ -66,30 +96,6 @@ function createCM(id, parentId, title) {
         type: 'normal',
         contexts: ['editable']
     });
-}
-
-/**
- * Add context menu listener for phrase
- * @param {string} pid Phrase ID
- * @param {string} ptext Phrase text
- */
-function addContextMenuListener(pid, ptext) {
-    let l = events.push((info, tab) => {
-        if (info.menuItemId == pid) {
-
-            chrome.storage.local.get(["csTab"]).then((result) => {
-                chrome.tabs.sendMessage(result.csTab, { type: "phrase", msg: ptext });
-            });
-
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: addtext,
-                args: [ptext],
-            });
-
-        }
-    });
-    chrome.contextMenus.onClicked.addListener(events[l - 1]);
 }
 
 /**
@@ -128,14 +134,19 @@ function addtext(t) {
     }
 }
 
-/** Update context menus when phrases change */
-chrome.storage.onChanged.addListener(async (changes, areaName) => {
-    if (changes.phrases) {
-        let result = await chrome.storage.local.get(["phrases"]);
-        for (const e of events) {
-            chrome.contextMenus.onClicked.removeListener(e);
+/**
+ * Map phrase ids to phrase text
+ * @param phrases Phrase data
+ * @returns Array of key-value pairs
+ */
+function flattenPhrases(phrases) {
+    let phraseMap = Array();
+    for (const group of phrases.groups) {
+        for (const phrasegroup of group.phrasegroups) {
+            for (const phrase of phrasegroup.phrases) {
+                phraseMap.push([phrase.pid, phrase.ptext]);
+            }
         }
-        chrome.contextMenus.removeAll();
-        loadmenus(result.phrases);
     }
-});
+    return phraseMap;
+}
